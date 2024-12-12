@@ -3,66 +3,65 @@ import SwiftUI
 struct SettingsView: View {
     @ObservedObject var manager: MenuBarManager
     @Environment(\.dismiss) var dismiss
+    @State private var launchAtLogin = false
     
     var body: some View {
-        VStack(spacing: 20) {
-            Text("工作时间设置")
-                .font(.headline)
+        VStack(alignment: .leading, spacing: 24) {
+            Toggle("Launch at login", isOn: $launchAtLogin)
             
-            GroupBox("上午") {
-                VStack(alignment: .leading, spacing: 12) {
+            GroupBox {
+                VStack(alignment: .leading, spacing: 16) {
                     HStack {
-                        Text("开始时间：")
-                        DatePicker("", selection: $manager.morningStartTime, displayedComponents: .hourAndMinute)
-                            .labelsHidden()
+                        Text("Morning range")
+                            .foregroundColor(.secondary)
+                            .frame(width: 120, alignment: .leading)
+                        
+                        HStack(spacing: 12) {
+                            DatePicker("", selection: $manager.morningStartTime, displayedComponents: .hourAndMinute)
+                                .labelsHidden()
+                                .frame(width: 85)
+                            
+                            Text("–")
+                                .foregroundColor(.secondary)
+                            
+                            DatePicker("", selection: $manager.morningEndTime, displayedComponents: .hourAndMinute)
+                                .labelsHidden()
+                                .frame(width: 85)
+                        }
                     }
                     
                     HStack {
-                        Text("结束时间：")
-                        DatePicker("", selection: $manager.morningEndTime, displayedComponents: .hourAndMinute)
-                            .labelsHidden()
+                        Text("Afternoon range")
+                            .foregroundColor(.secondary)
+                            .frame(width: 120, alignment: .leading)
+                        
+                        HStack(spacing: 12) {
+                            DatePicker("", selection: $manager.afternoonStartTime, displayedComponents: .hourAndMinute)
+                                .labelsHidden()
+                                .frame(width: 85)
+                            
+                            Text("–")
+                                .foregroundColor(.secondary)
+                            
+                            DatePicker("", selection: $manager.afternoonEndTime, displayedComponents: .hourAndMinute)
+                                .labelsHidden()
+                                .frame(width: 85)
+                        }
                     }
                 }
-                .padding(.vertical, 8)
+                .padding(8)
             }
-            
-            GroupBox("下午") {
-                VStack(alignment: .leading, spacing: 12) {
-                    HStack {
-                        Text("开始时间：")
-                        DatePicker("", selection: $manager.afternoonStartTime, displayedComponents: .hourAndMinute)
-                            .labelsHidden()
-                    }
-                    
-                    HStack {
-                        Text("结束时间：")
-                        DatePicker("", selection: $manager.afternoonEndTime, displayedComponents: .hourAndMinute)
-                            .labelsHidden()
-                    }
-                }
-                .padding(.vertical, 8)
-            }
-            
-            Divider()
-            
-            HStack {
-                Button("取消") {
-                    dismiss()
-                }
-                
-                Button("保存") {
-                    manager.updateSettings()
-                    dismiss()
-                }
-                .keyboardShortcut(.defaultAction)
-            }
-            .padding(.top)
+            .backgroundStyle(Color(NSColor.controlBackgroundColor))
+
         }
-        .padding()
-        .frame(width: 300)
+        .padding(20)
+        .frame(width: 380)
+        .background(Color(NSColor.windowBackgroundColor))
+        .environment(\.colorScheme, .dark)
     }
 }
 
 #Preview {
     SettingsView(manager: MenuBarManager())
+        .environment(\.colorScheme, .dark)
 } 

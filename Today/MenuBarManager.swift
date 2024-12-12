@@ -6,10 +6,30 @@ class MenuBarManager: NSObject, ObservableObject {
     private var timer: Timer?
     private var settingsWindow: NSWindow?
     
-    @Published var morningStartTime: Date
-    @Published var morningEndTime: Date
-    @Published var afternoonStartTime: Date
-    @Published var afternoonEndTime: Date
+    @Published var morningStartTime: Date {
+        didSet {
+            updateDisplay()
+            saveSettings()
+        }
+    }
+    @Published var morningEndTime: Date {
+        didSet {
+            updateDisplay()
+            saveSettings()
+        }
+    }
+    @Published var afternoonStartTime: Date {
+        didSet {
+            updateDisplay()
+            saveSettings()
+        }
+    }
+    @Published var afternoonEndTime: Date {
+        didSet {
+            updateDisplay()
+            saveSettings()
+        }
+    }
     
     override init() {
         // 初始化默认时间
@@ -21,13 +41,11 @@ class MenuBarManager: NSObject, ObservableObject {
         
         super.init()
         
+        loadSettings()
+        
         DispatchQueue.main.async { [weak self] in
             self?.setupStatusItem()
         }
-    }
-    
-    deinit {
-        timer?.invalidate()
     }
     
     private func setupStatusItem() {
@@ -35,6 +53,25 @@ class MenuBarManager: NSObject, ObservableObject {
         updateMenuBarView()
         setupMenu()
         startTimer()
+    }
+    
+    private func updateDisplay() {
+        DispatchQueue.main.async { [weak self] in
+            self?.updateMenuBarView()
+            self?.updateMenu()
+        }
+    }
+    
+    private func startTimer() {
+        timer?.invalidate()
+        timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { [weak self] _ in
+            self?.updateDisplay()
+        }
+        timer?.tolerance = 1.0
+    }
+    
+    deinit {
+        timer?.invalidate()
     }
     
     private func setupMenu() {
@@ -54,10 +91,6 @@ class MenuBarManager: NSObject, ObservableObject {
         settingsItem.target = self
         menu.addItem(settingsItem)
         
-        // 添加更多选项
-        let moreItem = NSMenuItem(title: "More", action: nil, keyEquivalent: "")
-        menu.addItem(moreItem)
-        
         menu.addItem(NSMenuItem.separator())
         
         // 添加退出选项
@@ -71,63 +104,19 @@ class MenuBarManager: NSObject, ObservableObject {
         if settingsWindow == nil {
             let settingsView = SettingsView(manager: self)
             settingsWindow = NSWindow(
-                contentRect: NSRect(x: 0, y: 0, width: 300, height: 200),
+                contentRect: NSRect(x: 0, y: 0, width: 380, height: 300),
                 styleMask: [.titled, .closable],
                 backing: .buffered,
                 defer: false
             )
             settingsWindow?.center()
-            settingsWindow?.title = "设置"
+            settingsWindow?.title = "Day Progress Settings"
             settingsWindow?.contentView = NSHostingView(rootView: settingsView)
             settingsWindow?.isReleasedWhenClosed = false
         }
         
         settingsWindow?.makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)
-    }
-    
-    func updateSettings() {
-        // 更新设置后刷新显示
-        updateMenuBarView()
-        updateMenu()
-        
-        // 保存设置到用户默认值
-        saveSettings()
-    }
-    
-    private func saveSettings() {
-        let defaults = UserDefaults.standard
-        defaults.set(morningStartTime.timeIntervalSince1970, forKey: "morningStartTime")
-        defaults.set(morningEndTime.timeIntervalSince1970, forKey: "morningEndTime")
-        defaults.set(afternoonStartTime.timeIntervalSince1970, forKey: "afternoonStartTime")
-        defaults.set(afternoonEndTime.timeIntervalSince1970, forKey: "afternoonEndTime")
-    }
-    
-    private func loadSettings() {
-        let defaults = UserDefaults.standard
-        if let startTimeInterval = defaults.object(forKey: "morningStartTime") as? TimeInterval {
-            morningStartTime = Date(timeIntervalSince1970: startTimeInterval)
-        }
-        if let endTimeInterval = defaults.object(forKey: "morningEndTime") as? TimeInterval {
-            morningEndTime = Date(timeIntervalSince1970: endTimeInterval)
-        }
-        if let startTimeInterval = defaults.object(forKey: "afternoonStartTime") as? TimeInterval {
-            afternoonStartTime = Date(timeIntervalSince1970: startTimeInterval)
-        }
-        if let endTimeInterval = defaults.object(forKey: "afternoonEndTime") as? TimeInterval {
-            afternoonEndTime = Date(timeIntervalSince1970: endTimeInterval)
-        }
-    }
-    
-    private func startTimer() {
-        timer?.invalidate()
-        timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { [weak self] _ in
-            DispatchQueue.main.async {
-                self?.updateMenuBarView()
-                self?.updateMenu()
-            }
-        }
-        timer?.tolerance = 1.0
     }
     
     private func updateMenu() {
@@ -153,85 +142,94 @@ class MenuBarManager: NSObject, ObservableObject {
         let now = Date()
         let calendar = Calendar.current
         let hour = calendar.component(.hour, from: now)
+        let minute = calendar.component(.minute, from: now)
+        let currentMinutes = hour * 60 + minute
         
-        // 判断当前是上午还是下午
-        let isInMorningPeriod = hour >= calendar.component(.hour, from: morningStartTime) &&
-                               hour < calendar.component(.hour, from: morningEndTime)
-        let isInAfternoonPeriod = hour >= calendar.component(.hour, from: afternoonStartTime) &&
-                                 hour < calendar.component(.hour, from: afternoonEndTime)
+        // 获取各个时间点的分钟数
+        let morningStartMinutes = calendar.component(.hour, from: morningStartTime) * 60 + calendar.component(.minute, from: morningStartTime)
+        let morningEndMinutes = calendar.component(.hour, from: morningEndTime) * 60 + calendar.component(.minute, from: morningEndTime)
+        let afternoonStartMinutes = calendar.component(.hour, from: afternoonStartTime) * 60 + calendar.component(.minute, from: afternoonStartTime)
+        let afternoonEndMinutes = calendar.component(.hour, from: afternoonEndTime) * 60 + calendar.component(.minute, from: afternoonEndTime)
+        
+        // 判断当前是上午还是下午时段
+        let isInMorningPeriod = currentMinutes >= morningStartMinutes && currentMinutes < morningEndMinutes
+        let isInAfternoonPeriod = currentMinutes >= afternoonStartMinutes && currentMinutes < afternoonEndMinutes
         
         if isInMorningPeriod {
-            return calculateProgressForTimeRange(start: morningStartTime, end: morningEndTime)
+            let totalMinutes = morningEndMinutes - morningStartMinutes
+            let elapsedMinutes = currentMinutes - morningStartMinutes
+            return Double(elapsedMinutes) / Double(totalMinutes)
         } else if isInAfternoonPeriod {
-            return calculateProgressForTimeRange(start: afternoonStartTime, end: afternoonEndTime)
+            let totalMinutes = afternoonEndMinutes - afternoonStartMinutes
+            let elapsedMinutes = currentMinutes - afternoonStartMinutes
+            return Double(elapsedMinutes) / Double(totalMinutes)
         }
         
-        // 如果在工作时间之外，返回0或1
-        if hour < calendar.component(.hour, from: morningStartTime) {
+        // 如果在工作时间之外
+        if currentMinutes < morningStartMinutes {
             return 0
         } else {
             return 1
         }
     }
     
-    private func calculateProgressForTimeRange(start: Date, end: Date) -> Double {
-        let now = Date()
-        let calendar = Calendar.current
-        
-        let today = calendar.startOfDay(for: now)
-        let workStart = calendar.date(bySettingHour: calendar.component(.hour, from: start),
-                                    minute: calendar.component(.minute, from: start),
-                                    second: 0,
-                                    of: today) ?? now
-        let workEnd = calendar.date(bySettingHour: calendar.component(.hour, from: end),
-                                  minute: calendar.component(.minute, from: end),
-                                  second: 0,
-                                  of: today) ?? now
-        
-        let totalWorkDuration = workEnd.timeIntervalSince(workStart)
-        let elapsedTime = now.timeIntervalSince(workStart)
-        
-        let progress = elapsedTime / totalWorkDuration
-        return min(max(progress, 0), 1)
-    }
-    
     private func calculateRemainingTime() -> String {
         let now = Date()
         let calendar = Calendar.current
         let hour = calendar.component(.hour, from: now)
+        let minute = calendar.component(.minute, from: now)
+        let currentMinutes = hour * 60 + minute
         
-        let isInMorningPeriod = hour >= calendar.component(.hour, from: morningStartTime) &&
-                               hour < calendar.component(.hour, from: morningEndTime)
-        let isInAfternoonPeriod = hour >= calendar.component(.hour, from: afternoonStartTime) &&
-                                 hour < calendar.component(.hour, from: afternoonEndTime)
+        // 获取各个时间点的分钟数
+        let morningStartMinutes = calendar.component(.hour, from: morningStartTime) * 60 + calendar.component(.minute, from: morningStartTime)
+        let morningEndMinutes = calendar.component(.hour, from: morningEndTime) * 60 + calendar.component(.minute, from: morningEndTime)
+        let afternoonStartMinutes = calendar.component(.hour, from: afternoonStartTime) * 60 + calendar.component(.minute, from: afternoonStartTime)
+        let afternoonEndMinutes = calendar.component(.hour, from: afternoonEndTime) * 60 + calendar.component(.minute, from: afternoonEndTime)
         
-        let endTime: Date
-        let periodDescription: String
+        // 判断当前是上午还是下午时段
+        let isInMorningPeriod = currentMinutes >= morningStartMinutes && currentMinutes < morningEndMinutes
+        let isInAfternoonPeriod = currentMinutes >= afternoonStartMinutes && currentMinutes < afternoonEndMinutes
         
         if isInMorningPeriod {
-            endTime = morningEndTime
-            periodDescription = "morning"
+            let remainingMinutes = morningEndMinutes - currentMinutes
+            let hours = remainingMinutes / 60
+            let minutes = remainingMinutes % 60
+            return "\(hours) hrs \(minutes) min until end of morning"
         } else if isInAfternoonPeriod {
-            endTime = afternoonEndTime
-            periodDescription = "day"
+            let remainingMinutes = afternoonEndMinutes - currentMinutes
+            let hours = remainingMinutes / 60
+            let minutes = remainingMinutes % 60
+            return "\(hours) hrs \(minutes) min until end of day"
         } else {
-            if hour < calendar.component(.hour, from: morningStartTime) {
+            if currentMinutes < morningStartMinutes {
                 return "Work hasn't started"
             } else {
                 return "Work day ended"
             }
         }
-        
-        let today = calendar.startOfDay(for: now)
-        let workEnd = calendar.date(bySettingHour: calendar.component(.hour, from: endTime),
-                                  minute: calendar.component(.minute, from: endTime),
-                                  second: 0,
-                                  of: today) ?? now
-        
-        let remainingTime = workEnd.timeIntervalSince(now)
-        let hours = Int(remainingTime) / 3600
-        let minutes = Int(remainingTime) / 60 % 60
-        
-        return "\(hours) hrs \(minutes) min until end of \(periodDescription)"
+    }
+    
+    private func saveSettings() {
+        let defaults = UserDefaults.standard
+        defaults.set(morningStartTime.timeIntervalSince1970, forKey: "morningStartTime")
+        defaults.set(morningEndTime.timeIntervalSince1970, forKey: "morningEndTime")
+        defaults.set(afternoonStartTime.timeIntervalSince1970, forKey: "afternoonStartTime")
+        defaults.set(afternoonEndTime.timeIntervalSince1970, forKey: "afternoonEndTime")
+    }
+    
+    private func loadSettings() {
+        let defaults = UserDefaults.standard
+        if let startTimeInterval = defaults.object(forKey: "morningStartTime") as? TimeInterval {
+            morningStartTime = Date(timeIntervalSince1970: startTimeInterval)
+        }
+        if let endTimeInterval = defaults.object(forKey: "morningEndTime") as? TimeInterval {
+            morningEndTime = Date(timeIntervalSince1970: endTimeInterval)
+        }
+        if let startTimeInterval = defaults.object(forKey: "afternoonStartTime") as? TimeInterval {
+            afternoonStartTime = Date(timeIntervalSince1970: startTimeInterval)
+        }
+        if let endTimeInterval = defaults.object(forKey: "afternoonEndTime") as? TimeInterval {
+            afternoonEndTime = Date(timeIntervalSince1970: endTimeInterval)
+        }
     }
 } 
