@@ -6,13 +6,13 @@ struct MenuBarView: View {
     
     private var pieChartView: some View {
         PieChartViewRepresentable(progress: progress)
-            .frame(width: 18, height: 18)
+            .frame(width: 16, height: 16)
             .scaleEffect(0.9)
     }
     
     var body: some View {
         pieChartView
-            .padding(.horizontal, 6)
+            .padding(.horizontal, 2)
             .frame(height: 22)
     }
 }

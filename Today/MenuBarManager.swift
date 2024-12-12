@@ -49,7 +49,7 @@ class MenuBarManager: NSObject, ObservableObject {
     }
     
     private func setupStatusItem() {
-        statusItem = NSStatusBar.system.statusItem(withLength: 30)
+        statusItem = NSStatusBar.system.statusItem(withLength: 18)
         updateMenuBarView()
         setupMenu()
         startTimer()
@@ -132,7 +132,7 @@ class MenuBarManager: NSObject, ObservableObject {
         
         let menuBarView = MenuBarView(progress: calculateProgress())
         let hostingView = NSHostingView(rootView: menuBarView)
-        hostingView.frame = NSRect(x: 0, y: 0, width: 30, height: 22)
+        hostingView.frame = NSRect(x: 0, y: 0, width: 18, height: 22)
         
         button.subviews.forEach { $0.removeFromSuperview() }
         button.addSubview(hostingView)
