@@ -1,21 +1,20 @@
 import SwiftUI
 import AppKit
 
-class MenuBarManager: NSObject {
+class MenuBarManager: NSObject, ObservableObject {
     private var statusItem: NSStatusItem?
     private var timer: Timer?
+    private var settingsWindow: NSWindow?
     
     @Published var workStartTime: Date
     @Published var workEndTime: Date
     
     override init() {
-        // 初始化属性
         workStartTime = Calendar.current.date(bySettingHour: 9, minute: 0, second: 0, of: Date()) ?? Date()
         workEndTime = Calendar.current.date(bySettingHour: 18, minute: 0, second: 0, of: Date()) ?? Date()
         
         super.init()
         
-        // 在主线程上设置UI
         DispatchQueue.main.async { [weak self] in
             self?.setupStatusItem()
         }
@@ -26,16 +25,9 @@ class MenuBarManager: NSObject {
     }
     
     private func setupStatusItem() {
-        // 创建状态栏项
         statusItem = NSStatusBar.system.statusItem(withLength: 30)
-        
-        // 更新视图
         updateMenuBarView()
-        
-        // 设置菜单
         setupMenu()
-        
-        // 启动定时器
         startTimer()
     }
     
@@ -70,7 +62,47 @@ class MenuBarManager: NSObject {
     }
     
     @objc private func openSettings() {
-        // TODO: 实现设置窗口
+        if settingsWindow == nil {
+            let settingsView = SettingsView(manager: self)
+            settingsWindow = NSWindow(
+                contentRect: NSRect(x: 0, y: 0, width: 300, height: 200),
+                styleMask: [.titled, .closable],
+                backing: .buffered,
+                defer: false
+            )
+            settingsWindow?.center()
+            settingsWindow?.title = "设置"
+            settingsWindow?.contentView = NSHostingView(rootView: settingsView)
+            settingsWindow?.isReleasedWhenClosed = false
+        }
+        
+        settingsWindow?.makeKeyAndOrderFront(nil)
+        NSApp.activate(ignoringOtherApps: true)
+    }
+    
+    func updateSettings() {
+        // 更新设置后刷新显示
+        updateMenuBarView()
+        updateMenu()
+        
+        // 保存设置到用户默认值
+        saveSettings()
+    }
+    
+    private func saveSettings() {
+        let defaults = UserDefaults.standard
+        defaults.set(workStartTime.timeIntervalSince1970, forKey: "workStartTime")
+        defaults.set(workEndTime.timeIntervalSince1970, forKey: "workEndTime")
+    }
+    
+    private func loadSettings() {
+        let defaults = UserDefaults.standard
+        if let startTimeInterval = defaults.object(forKey: "workStartTime") as? TimeInterval {
+            workStartTime = Date(timeIntervalSince1970: startTimeInterval)
+        }
+        if let endTimeInterval = defaults.object(forKey: "workEndTime") as? TimeInterval {
+            workEndTime = Date(timeIntervalSince1970: endTimeInterval)
+        }
     }
     
     private func startTimer() {
