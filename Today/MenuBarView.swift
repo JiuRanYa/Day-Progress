@@ -6,12 +6,14 @@ struct MenuBarView: View {
     
     private var pieChartView: some View {
         PieChartViewRepresentable(progress: progress)
-            .frame(width: 16, height: 16)
+            .frame(width: 18, height: 18)
+            .scaleEffect(0.9)
     }
     
     var body: some View {
         pieChartView
-            .padding(.horizontal, 7)
+            .padding(.horizontal, 6)
+            .frame(height: 22)
     }
 }
 
@@ -20,6 +22,8 @@ struct PieChartViewRepresentable: NSViewRepresentable {
     
     func makeNSView(context: Context) -> PieChartView {
         let chart = PieChartView()
+        chart.minOffset = 0
+        chart.setExtraOffsets(left: 0, top: 0, right: 0, bottom: 0)
         updateChart(chart)
         return chart
     }
@@ -41,9 +45,13 @@ struct PieChartViewRepresentable: NSViewRepresentable {
         ]
         dataSet.drawValuesEnabled = false
         dataSet.sliceSpace = 0
+        dataSet.selectionShift = 0
         
         // 配置图表
-        chart.data = PieChartData(dataSet: dataSet)
+        let data = PieChartData(dataSet: dataSet)
+        chart.data = data
+        
+        // 基本设置
         chart.holeRadiusPercent = 0
         chart.transparentCircleRadiusPercent = 0
         chart.drawEntryLabelsEnabled = false
@@ -53,6 +61,14 @@ struct PieChartViewRepresentable: NSViewRepresentable {
         
         // 移除所有额外的视觉元素
         chart.drawHoleEnabled = false
+        chart.maxAngle = 360
+        
+        // 移除所有边距和额外空间
+        chart.minOffset = 0
+        chart.extraLeftOffset = 0
+        chart.extraRightOffset = 0
+        chart.extraTopOffset = 0
+        chart.extraBottomOffset = 0
         
         // 设置起始角度为-90度（顶部），这样进度会从顶部向右增长
         chart.rotationAngle = -90
@@ -64,6 +80,6 @@ struct PieChartViewRepresentable: NSViewRepresentable {
 
 #Preview {
     MenuBarView(progress: 0.7)
-        .frame(width: 30, height: 22)
+        .frame(width: 24, height: 22)
         .background(Color.white)
 } 
