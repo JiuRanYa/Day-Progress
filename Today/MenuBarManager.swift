@@ -32,16 +32,35 @@ class MenuBarManager: NSObject, ObservableObject {
     }
     
     override init() {
-        // 初始化默认时间
+        // 先加载已保存的设置
+        let defaults = UserDefaults.standard
         let calendar = Calendar.current
-        morningStartTime = calendar.date(bySettingHour: 9, minute: 0, second: 0, of: Date()) ?? Date()
-        morningEndTime = calendar.date(bySettingHour: 12, minute: 0, second: 0, of: Date()) ?? Date()
-        afternoonStartTime = calendar.date(bySettingHour: 13, minute: 0, second: 0, of: Date()) ?? Date()
-        afternoonEndTime = calendar.date(bySettingHour: 18, minute: 0, second: 0, of: Date()) ?? Date()
+        
+        if let startTimeInterval = defaults.object(forKey: "morningStartTime") as? TimeInterval {
+            morningStartTime = Date(timeIntervalSince1970: startTimeInterval)
+        } else {
+            morningStartTime = calendar.date(bySettingHour: 9, minute: 0, second: 0, of: Date()) ?? Date()
+        }
+        
+        if let endTimeInterval = defaults.object(forKey: "morningEndTime") as? TimeInterval {
+            morningEndTime = Date(timeIntervalSince1970: endTimeInterval)
+        } else {
+            morningEndTime = calendar.date(bySettingHour: 12, minute: 0, second: 0, of: Date()) ?? Date()
+        }
+        
+        if let startTimeInterval = defaults.object(forKey: "afternoonStartTime") as? TimeInterval {
+            afternoonStartTime = Date(timeIntervalSince1970: startTimeInterval)
+        } else {
+            afternoonStartTime = calendar.date(bySettingHour: 13, minute: 0, second: 0, of: Date()) ?? Date()
+        }
+        
+        if let endTimeInterval = defaults.object(forKey: "afternoonEndTime") as? TimeInterval {
+            afternoonEndTime = Date(timeIntervalSince1970: endTimeInterval)
+        } else {
+            afternoonEndTime = calendar.date(bySettingHour: 18, minute: 0, second: 0, of: Date()) ?? Date()
+        }
         
         super.init()
-        
-        loadSettings()
         
         DispatchQueue.main.async { [weak self] in
             self?.setupStatusItem()
@@ -215,21 +234,5 @@ class MenuBarManager: NSObject, ObservableObject {
         defaults.set(morningEndTime.timeIntervalSince1970, forKey: "morningEndTime")
         defaults.set(afternoonStartTime.timeIntervalSince1970, forKey: "afternoonStartTime")
         defaults.set(afternoonEndTime.timeIntervalSince1970, forKey: "afternoonEndTime")
-    }
-    
-    private func loadSettings() {
-        let defaults = UserDefaults.standard
-        if let startTimeInterval = defaults.object(forKey: "morningStartTime") as? TimeInterval {
-            morningStartTime = Date(timeIntervalSince1970: startTimeInterval)
-        }
-        if let endTimeInterval = defaults.object(forKey: "morningEndTime") as? TimeInterval {
-            morningEndTime = Date(timeIntervalSince1970: endTimeInterval)
-        }
-        if let startTimeInterval = defaults.object(forKey: "afternoonStartTime") as? TimeInterval {
-            afternoonStartTime = Date(timeIntervalSince1970: startTimeInterval)
-        }
-        if let endTimeInterval = defaults.object(forKey: "afternoonEndTime") as? TimeInterval {
-            afternoonEndTime = Date(timeIntervalSince1970: endTimeInterval)
-        }
     }
 } 
