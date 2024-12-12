@@ -113,7 +113,7 @@ class MenuBarManager: NSObject, ObservableObject {
         menu.addItem(NSMenuItem.separator())
         
         // 添加退出选项
-        let quitItem = NSMenuItem(title: "Quit Day Progress", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
+        let quitItem = NSMenuItem(title: "Quit Today", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
         menu.addItem(quitItem)
         
         statusItem?.menu = menu
@@ -129,7 +129,7 @@ class MenuBarManager: NSObject, ObservableObject {
                 defer: false
             )
             settingsWindow?.center()
-            settingsWindow?.title = "Day Progress Settings"
+            settingsWindow?.title = "Work Progress Settings"
             settingsWindow?.contentView = NSHostingView(rootView: settingsView)
             settingsWindow?.isReleasedWhenClosed = false
         }
