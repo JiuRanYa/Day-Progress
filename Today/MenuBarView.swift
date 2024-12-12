@@ -36,8 +36,8 @@ struct PieChartViewRepresentable: NSViewRepresentable {
         
         // 设置样式
         dataSet.colors = [
-            NSUIColor.black.withAlphaComponent(0.8), // 深色部分
-            NSUIColor.black.withAlphaComponent(0.1)  // 浅色部分
+            NSUIColor.black.withAlphaComponent(0.8),  // 深色部分（已完成）
+            NSUIColor.black.withAlphaComponent(0.1)   // 浅色部分（未完成）
         ]
         dataSet.drawValuesEnabled = false
         dataSet.sliceSpace = 0
@@ -54,8 +54,8 @@ struct PieChartViewRepresentable: NSViewRepresentable {
         // 移除所有额外的视觉元素
         chart.drawHoleEnabled = false
         
-        // 设置起始角度，使进度从顶部开始
-        chart.rotationAngle = 90
+        // 设置起始角度为-90度（顶部），这样进度会从顶部向右增长
+        chart.rotationAngle = -90
         
         // 确保图表更新
         chart.notifyDataSetChanged()
