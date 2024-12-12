@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		CAAC629D2D0A910900664AA2 /* DGCharts in Frameworks */ = {isa = PBXBuildFile; productRef = CAAC629C2D0A910900664AA2 /* DGCharts */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		CAA5240F2D0A82BF00B8A363 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -29,12 +33,38 @@
 		CAA524182D0A82BF00B8A363 /* TodayUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TodayUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		CAA523FF2D0A82BE00B8A363 /* Today */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = Today;
-			sourceTree = "<group>";
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		CAAC62992D0A90DD00664AA2 /* Exceptions for "Today" folder in "Today" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Assets.xcassets,
+				ContentView.swift,
+				MenuBarManager.swift,
+				MenuBarView.swift,
+				"Preview Content/Preview Assets.xcassets",
+				ProgressInfoView.swift,
+				SettingsView.swift,
+				TodayApp.swift,
+			);
+			target = CAA523FC2D0A82BE00B8A363 /* Today */;
 		};
+		CAAC629A2D0A90DD00664AA2 /* Exceptions for "Today" folder in "TodayTests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Assets.xcassets,
+				ContentView.swift,
+				MenuBarManager.swift,
+				MenuBarView.swift,
+				"Preview Content/Preview Assets.xcassets",
+				ProgressInfoView.swift,
+				SettingsView.swift,
+				TodayApp.swift,
+			);
+			target = CAA5240D2D0A82BF00B8A363 /* TodayTests */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
 		CAA524112D0A82BF00B8A363 /* TodayTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = TodayTests;
@@ -45,6 +75,15 @@
 			path = TodayUITests;
 			sourceTree = "<group>";
 		};
+		CAAC62902D0A90DD00664AA2 /* Today */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				CAAC62992D0A90DD00664AA2 /* Exceptions for "Today" folder in "Today" target */,
+				CAAC629A2D0A90DD00664AA2 /* Exceptions for "Today" folder in "TodayTests" target */,
+			);
+			path = Today;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,6 +91,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CAAC629D2D0A910900664AA2 /* DGCharts in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -75,7 +115,7 @@
 		CAA523F42D0A82BE00B8A363 = {
 			isa = PBXGroup;
 			children = (
-				CAA523FF2D0A82BE00B8A363 /* Today */,
+				CAAC62902D0A90DD00664AA2 /* Today */,
 				CAA524112D0A82BF00B8A363 /* TodayTests */,
 				CAA5241B2D0A82BF00B8A363 /* TodayUITests */,
 				CAA523FE2D0A82BE00B8A363 /* Products */,
@@ -107,11 +147,9 @@
 			);
 			dependencies = (
 			);
-			fileSystemSynchronizedGroups = (
-				CAA523FF2D0A82BE00B8A363 /* Today */,
-			);
 			name = Today;
 			packageProductDependencies = (
+				CAAC629C2D0A910900664AA2 /* DGCharts */,
 			);
 			productName = Today;
 			productReference = CAA523FD2D0A82BE00B8A363 /* Today.app */;
@@ -132,6 +170,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				CAA524112D0A82BF00B8A363 /* TodayTests */,
+				CAAC62902D0A90DD00664AA2 /* Today */,
 			);
 			name = TodayTests;
 			packageProductDependencies = (
@@ -195,6 +234,9 @@
 			);
 			mainGroup = CAA523F42D0A82BE00B8A363;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				CAAC629B2D0A910900664AA2 /* XCRemoteSwiftPackageReference "Charts" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = CAA523FE2D0A82BE00B8A363 /* Products */;
 			projectDirPath = "";
@@ -541,6 +583,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		CAAC629B2D0A910900664AA2 /* XCRemoteSwiftPackageReference "Charts" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/danielgindi/Charts.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		CAAC629C2D0A910900664AA2 /* DGCharts */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CAAC629B2D0A910900664AA2 /* XCRemoteSwiftPackageReference "Charts" */;
+			productName = DGCharts;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = CAA523F52D0A82BE00B8A363 /* Project object */;
 }
