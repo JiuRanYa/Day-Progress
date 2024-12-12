@@ -51,17 +51,12 @@ struct SettingsView: View {
                 }
                 .padding(8)
             }
-            .backgroundStyle(Color(NSColor.controlBackgroundColor))
-
         }
         .padding(20)
         .frame(width: 380)
-        .background(Color(NSColor.windowBackgroundColor))
-        .environment(\.colorScheme, .dark)
     }
 }
 
 #Preview {
     SettingsView(manager: MenuBarManager())
-        .environment(\.colorScheme, .dark)
 } 
