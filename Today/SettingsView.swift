@@ -7,46 +7,53 @@ struct SettingsView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
-            Toggle("Launch at login", isOn: $launchAtLogin)
+            HStack {
+                Text("Launch at login")
+                    .foregroundColor(.secondary)
+                Spacer()
+                Toggle("", isOn: $launchAtLogin)
+                    .labelsHidden()
+                    .controlSize(.small)
+            }
             
             GroupBox {
                 VStack(alignment: .leading, spacing: 16) {
                     HStack {
                         Text("Morning range")
                             .foregroundColor(.secondary)
-                            .frame(width: 120, alignment: .leading)
                         
-                        HStack(spacing: 12) {
-                            DatePicker("", selection: $manager.morningStartTime, displayedComponents: .hourAndMinute)
-                                .labelsHidden()
-                                .frame(width: 85)
-                            
-                            Text("–")
-                                .foregroundColor(.secondary)
-                            
-                            DatePicker("", selection: $manager.morningEndTime, displayedComponents: .hourAndMinute)
-                                .labelsHidden()
-                                .frame(width: 85)
-                        }
+                        Spacer()
+                        
+                        DatePicker("", selection: $manager.morningStartTime, displayedComponents: .hourAndMinute)
+                            .labelsHidden()
+                            .frame(width: 85)
+                        
+                        Text("～")
+                            .foregroundColor(.secondary)
+                            .padding(.horizontal, 2)
+                        
+                        DatePicker("", selection: $manager.morningEndTime, displayedComponents: .hourAndMinute)
+                            .labelsHidden()
+                            .frame(width: 85)
                     }
                     
                     HStack {
                         Text("Afternoon range")
                             .foregroundColor(.secondary)
-                            .frame(width: 120, alignment: .leading)
                         
-                        HStack(spacing: 12) {
-                            DatePicker("", selection: $manager.afternoonStartTime, displayedComponents: .hourAndMinute)
-                                .labelsHidden()
-                                .frame(width: 85)
-                            
-                            Text("–")
-                                .foregroundColor(.secondary)
-                            
-                            DatePicker("", selection: $manager.afternoonEndTime, displayedComponents: .hourAndMinute)
-                                .labelsHidden()
-                                .frame(width: 85)
-                        }
+                        Spacer()
+                        
+                        DatePicker("", selection: $manager.afternoonStartTime, displayedComponents: .hourAndMinute)
+                            .labelsHidden()
+                            .frame(width: 85)
+                        
+                        Text("～")
+                            .foregroundColor(.secondary)
+                            .padding(.horizontal, 2)
+                        
+                        DatePicker("", selection: $manager.afternoonEndTime, displayedComponents: .hourAndMinute)
+                            .labelsHidden()
+                            .frame(width: 85)
                     }
                 }
                 .padding(8)
