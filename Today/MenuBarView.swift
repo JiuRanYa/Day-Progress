@@ -38,10 +38,10 @@ struct PieChartViewRepresentable: NSViewRepresentable {
         let remaining = PieChartDataEntry(value: (1 - progress) * 100)
         let dataSet = PieChartDataSet(entries: [completed, remaining])
         
-        // 设置样式
+        // 设���样式
         dataSet.colors = [
-            NSUIColor.black.withAlphaComponent(0.8),  // 深色部分（已完成）
-            NSUIColor.black.withAlphaComponent(0.1)   // 浅色部分（未完成）
+            NSUIColor.white.withAlphaComponent(0.8),  // 将深色部分改为白色（已完成）
+            NSUIColor.white.withAlphaComponent(0.1)   // 浅色部分也用白色但透明度更低（未完成）
         ]
         dataSet.drawValuesEnabled = false
         dataSet.sliceSpace = 0
