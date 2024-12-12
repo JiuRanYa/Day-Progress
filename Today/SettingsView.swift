@@ -9,20 +9,39 @@ struct SettingsView: View {
             Text("工作时间设置")
                 .font(.headline)
             
-            VStack(alignment: .leading, spacing: 16) {
-                HStack {
-                    Text("上班时间：")
-                    DatePicker("", selection: $manager.workStartTime, displayedComponents: .hourAndMinute)
-                        .labelsHidden()
+            GroupBox("上午") {
+                VStack(alignment: .leading, spacing: 12) {
+                    HStack {
+                        Text("开始时间：")
+                        DatePicker("", selection: $manager.morningStartTime, displayedComponents: .hourAndMinute)
+                            .labelsHidden()
+                    }
+                    
+                    HStack {
+                        Text("结束时间：")
+                        DatePicker("", selection: $manager.morningEndTime, displayedComponents: .hourAndMinute)
+                            .labelsHidden()
+                    }
                 }
-                
-                HStack {
-                    Text("下班时间：")
-                    DatePicker("", selection: $manager.workEndTime, displayedComponents: .hourAndMinute)
-                        .labelsHidden()
-                }
+                .padding(.vertical, 8)
             }
-            .padding(.horizontal)
+            
+            GroupBox("下午") {
+                VStack(alignment: .leading, spacing: 12) {
+                    HStack {
+                        Text("开始时间：")
+                        DatePicker("", selection: $manager.afternoonStartTime, displayedComponents: .hourAndMinute)
+                            .labelsHidden()
+                    }
+                    
+                    HStack {
+                        Text("结束时间：")
+                        DatePicker("", selection: $manager.afternoonEndTime, displayedComponents: .hourAndMinute)
+                            .labelsHidden()
+                    }
+                }
+                .padding(.vertical, 8)
+            }
             
             Divider()
             
@@ -32,7 +51,6 @@ struct SettingsView: View {
                 }
                 
                 Button("保存") {
-                    // 触发设置更新
                     manager.updateSettings()
                     dismiss()
                 }

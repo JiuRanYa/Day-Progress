@@ -38,7 +38,6 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Assets.xcassets,
-				ContentView.swift,
 				MenuBarManager.swift,
 				MenuBarView.swift,
 				"Preview Content/Preview Assets.xcassets",
@@ -52,7 +51,6 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Assets.xcassets,
-				ContentView.swift,
 				MenuBarManager.swift,
 				MenuBarView.swift,
 				"Preview Content/Preview Assets.xcassets",
